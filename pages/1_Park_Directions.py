@@ -1,13 +1,13 @@
-# 6/27/25
-# Author: Tony Rahman | https://flyingsalmon.net
-# This demonstrates an advanced, interactive map showing parks within 10 miles of 98012 zip code.
-# Uses streamlit's pydeck for advanced mapping features, and UI (multiselect, filter)
-# *** For simpler interactive maps and charts, see charts_examples.py ***
+# This is a supplmentary page to Home_MC_Parks_Map.py app because it's under /pages/ subdir and is prefixed with "1_<scriptFile>.py" in that subdir
+# which makes streamlit automatically add it as a page and its link on a sidebar menu from the main Home_MC_Parks_Map.py page.
+# Its purpose is to allow getting directions to a selected park (from dropdown list).
+# The dataframe is the same as in Home_MC_Parks_Map.py
 
+# IMPORTANT: This script and image are in inside pages/ subdir but since it's made a page of the main Home_MC_Parks_Map.py page which is in the root directory we need to specify
+# the pages/ path for the image from here!
 
 import streamlit as st
 import pandas as pd
-import pydeck as pdk
 
 # Parks data
 df = pd.DataFrame({
@@ -95,97 +95,16 @@ df = pd.DataFrame({
     ]
 })
 
-# Flatten all unique features into a 1D array: e.g. ['ADA Accessible', 'Baseball Field',..., 'Trails', 'Wetland']
-all_features = sorted(set(
-    feature.strip()
-    for feature_list in df['features']
-    for feature in feature_list.split(',')
-))
 
-# print(all_features)
+st.write("### Directions to Parks & Recreation Areas")
 
-st.write("### Parks & Recreation Areas within 10 miles of 98012")
+selected_park = st.selectbox(f"Select a park, then click its Directions link below: {len(df)} locations", sorted(df['Park']))
+park_row = df[df['Park'] == selected_park].iloc[0]
 
-# Multiselect UI (dropdown and each selection is placed in the field one by one)
-selected_features = st.multiselect(
-    "Filter parks by features:",
-    options=all_features, # items in the dropdown list
-    default=[]
+st.markdown(
+    f"Selected: 📍{selected_park}| {park_row['features']} 🚗 [🧭 Directions](https://www.google.com/maps/search/?api=1&query={park_row['lat']},{park_row['lon']})",
+    unsafe_allow_html=True
 )
-
-# Filter function
-def has_selected_features(features_cell, selected):
-    features_set = set(f.strip() for f in features_cell.split(','))
-    return any(f in features_set for f in selected)
-
-# Filter DataFrame based on selected features
-if selected_features: # if any feature is selected from dropdown by user
-    filtered_df = df[df['features'].apply(lambda x: has_selected_features(x, selected_features))]
-else:
-    filtered_df = df # if nothing is specified in filter, show all
-
-# Display number of parks
-st.subheader(f"Showing {len(filtered_df)} park(s)")
-
-
-
-# Pydeck map
-# Get the token from toml file
-mapbox_token = st.secrets["mapbox_token"]
-st.pydeck_chart(pdk.Deck(
-    map_style='mapbox://styles/mapbox/outdoors-v11',
-    initial_view_state=pdk.ViewState(
-        latitude=47.87,
-        longitude=-122.215,
-        zoom=10,
-        pitch=30
-    ), 
-    layers=[
-        pdk.Layer(
-            'ScatterplotLayer',
-            data=filtered_df,
-            get_position='[lon, lat]',
-            get_fill_color='[34, 139, 34, 180]',
-            get_radius=400, # size of the markers
-            pickable=True
-        )
-    ],
-    tooltip={
-        "html": "<b>{Park}</b><br/>{features}",
-        #"html": "<b>{Park}</b><br/>{features}<br/><a href='{url}' target='_blank'>🧭 Get Directions</a>",
-        "style": {"backgroundColor": "ivory", "color": "black", "fontSize": "16px"}
-    },
-  
-   api_keys={"mapbox": mapbox_token}
-))
-
-
-# Add a href link using streamlit. For UI help for example.
-# This is useful to link to an external page (not a subpage) and control if it should open in a new tab or current tab.
-# url = "http://flyingsalmon.net"
-# link_text = "Click here for map UI navigation tips"
-# st.markdown(
-#     f'<a href="{url}" target="_blank">🌐 {link_text}</a>',
-#     unsafe_allow_html=True
-# )
-
-# To create a clickable href link to subpage 1_UIGuide.py—as inside a pages/ directory:
-# st.markdown("[📘 Map UI Navigation Help](?page=1_UI_Guide)", unsafe_allow_html=True)  # works but currently commented
-
-# The file to navigate to is in /pages/1_UI_Guide.py but the display in the sidebar menu will be automatically shown as: UI Guide (underscores replaced by spaces)
-# And to refer to it as a link with st.markdown, remove the extension (.py) when specifying the parameter above but keep the underscores as in original file name!
-
-# st.divider() # horizontal light gray line
-
-# Following block of code for dropdown list of parks and dynamic directions url is now in 1_Park_Directions.py file:
-# selected_park = st.selectbox("Get info & directions to a specific park:", sorted(df['Park']))
-# park_row = df[df['Park'] == selected_park].iloc[0]
-# 
-# st.markdown(
-#     f"Selected: 📍{selected_park}| {park_row['features']} 🚗 [🧭 Directions](https://www.google.com/maps/search/?api=1&query={park_row['lat']},{park_row['lon']})",
-#     unsafe_allow_html=True
-# )
-
 
 # NOTE: Google Maps shows coordinates in Degrees, Minutes, Seconds (DMS) format, but our dataframe needs Decimal Degrees (DD).
 # To get DD format from Google maps, locate in maps, right-click on the pin marker to see the DD values (drag mouse until next row in the popup to copy the coordinates text).
@@ -193,5 +112,3 @@ st.pydeck_chart(pdk.Deck(
 # Other tools:
 # 	https://latlongdata.com/lat-long-converter/
 # 	https://www.gps-coordinates.net/gps-coordinates-converter
-# 🗺 💡 🧭 🚗 🔐
-###
