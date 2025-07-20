@@ -29,7 +29,8 @@ df = pd.DataFrame({
         'Lighthouse Park (Mukilteo)', 'Picnic Point Park (Edmonds)',
         
         'Edmonds - Bracketts Landing N.', 'Boxcar Park (The Muse, Everett)',
-        'American Legion Memorial Park (Everett)', 'Meadowdale Beach Park'
+        'American Legion Memorial Park (Everett)', 'Meadowdale Beach Park',
+        'Marina Beach Park'
     ],
     
     'lat': [47.88015, 47.87239,
@@ -49,7 +50,8 @@ df = pd.DataFrame({
             47.951183, 47.880186,
             
             47.813657, 48.000805,
-            48.016112, 47.857301
+            48.016112, 47.857301,
+            47.805186
             
             ],
     
@@ -70,7 +72,8 @@ df = pd.DataFrame({
             -122.306542, -122.331860,
             
             -122.381559, -122.221843,
-            -122.203424, -122.316456
+            -122.203424, -122.316456,
+            -122.393978
             ],
     
     'features': [
@@ -92,7 +95,8 @@ df = pd.DataFrame({
         
         'Trails, Beach, Picnic Area', 'Picnic Area, Restroom, Grassy Area, Hiking, Biking Trail, Birdwatching, Wildlife Watching',
         'Trails, BBQ, Baseball Field, Basketball Court, Tennis Court, Picnic Area, Restroom, Playground, Gardens, Arboretum',
-        'Beach, Picnic Area, Hiking, Trails, Wetlands, Wildlife Watching, Grassy Area'
+        'Beach, Picnic Area, Hiking, Trails, Wetlands, Wildlife Watching, Grassy Area',
+        'BBQ, Beach, Grassy Area, Picnic, Playground'
     ]
 })
 
